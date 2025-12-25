@@ -10,7 +10,7 @@
 .main_frame {
     position: relative;
     width: 1440px;
-    height: 1440px;
+    height: 1312px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -163,5 +163,5 @@
     height: 126px;
     /* margin-right: 37px; */
     margin-left: 47px;
-    background-color: rgb(124, 125, 125);
+    background-color: rgb(97, 3, 3);
 }
