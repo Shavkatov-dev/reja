@@ -8,6 +8,11 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+    />
+
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <title>Portfolio</title>
 </head>
@@ -19,7 +24,7 @@
                 <div class="profile-1">
                     <img src="images/profile.png">
                 </div>
-                <div class="profile-2"><%=user.name%></div>
+                <div class="block-title"><%=user.name%></div>
                 <div class="profile-3"><%=user.profession%></div>
                 <div class="profile-icons">
                     <a class="link_href" href="">
@@ -55,17 +60,172 @@
                 </div>
              </div>
              <div class="marginer"></div>
-             <div class="about">2</div>
+             <div class="about">
+                <div class="about-left">
+                    <div class="about-rec1">
+                        <div class="about-text">Age:</div>
+                    </div>
+                    <div class="about-rec2">
+                        <div class="about-text">Residence:</div>
+                    </div>
+                    <div class="about-rec3">
+                        <div class="about-text">Freelance:</div>
+                    </div>
+                    <div class="about-rec4">
+                        <div class="about-text">Address:</div>
+                    </div>
+                </div>
+                <div class="about-right">
+                    <div class="about-text" style="text-align: right;"><%=user.age%></div>
+                    <div class="about-text" style="text-align: right;"><%=user.residence%></div>
+                    <div class="about-text" style="color: #7EB942; text-align: right;">Available</div>
+                    <div class="about-text" style="text-align: right;"><%=user.address%></div>
+                </div>
+             </div>
              <div class="marginer"></div>
-             <div class="languages">3</div>
+             <div class="languages">
+                    <div class="block-title" >Languages</div>
+                    <div class="h4" style="margin-top: 15px;">
+                        <span><%=user.languages[0]%></span>
+                        <span>100%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line100.svg">
+                    </div>
+                    <div class="h4">
+                        <span><%=user.languages[1]%></span>
+                        <span>80%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line80.svg">
+                    </div>
+                    <div class="h4">
+                        <span><%=user.languages[2]%></span>
+                        <span>60%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line60.svg">
+                    </div>
+             </div>
              <div class="marginer"></div>
-             <div class="skills">4</div>
+             <div class="skills">
+                <div class="block-title" >Skills</div>
+                    <div class="h4" style="margin-top: 15px;">
+                        <span><%=user.skills[0]%></span>
+                        <span>90%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line90.svg">
+                    </div>
+                    <div class="h4">
+                        <span><%=user.skills[1]%></span>
+                        <span>85%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line85.svg">
+                    </div>
+                    <div class="h4">
+                        <span><%=user.skills[2]%></span>
+                        <span>80%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line80.svg">
+                    </div>
+                    <div class="h4">
+                        <span><%=user.skills[3]%></span>
+                        <span>75%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line75.svg">
+                    </div>
+                    <div class="h4" >
+                        <span><%=user.skills[4]%></span>
+                        <span>90%</span>
+                    </div>
+                    <div class="lang-marginer">
+                        <img src="icon/line90.svg">
+                    </div>
+             </div>
              <div class="marginer"></div>
-             <div class="extra_skills">5</div>
+             <div class="extra_skills">
+                <div class="block-title">Extra Skills</div>
+                <div class="extra1">
+                    <div><img src="icon/xtra rec.svg" style="margin-right: 15px;"></div>
+                    <div class="h4"><%=user.extra_skills[0]%>, <%=user.extra_skills[1]%></div>
+                </div>
+                <div class="extra1">
+                    <div><img src="icon/xtra rec.svg" style="margin-right: 15px;"></div>
+                    <div class="h4"><%=user.extra_skills[2]%>, <%=user.extra_skills[3]%>, <%=user.extra_skills[4]%></div>
+                </div>
+                <div class="extra1">
+                    <div><img src="icon/xtra rec.svg" style="margin-right: 15px;"></div>
+                    <div class="h4"><%=user.extra_skills[5]%></div>
+                </div>
+             </div>
              <div class="marginer"></div>
             </div>
-            <div class="mid_frame"></div>
-            <div class="right_frame"></div>
+            <div class="mid_frame">
+                <div class="mid-top">
+                    <div class="profession">
+                        <div class="profession1"><%=user.profession%> in <%=user.work_place%></div>
+                        <div class="profession2"><%=user.about_me%></div>
+                        <div class="mid-btn">
+                            <div class="hire-me">HIRE ME →</div>
+                        </div>
+                    </div>
+                    <div class="author-photo"><img src="images/your-image.svg"></div>
+                </div>
+                <div class="mid-bot">
+                    <div class="h2">My Services</div>
+                    <div class="profession2" style=" margin-top: 31px;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet, corporis accusantium.</div> 
+                    <div class="six-blocks">
+                        <div class="s-block" style="margin-right: 50px;">
+                            <div class="icon"><img src="icon/coding.svg" alt=""></div>
+                            <h4 class="icon-text">Web Development</h4>
+                            <div class="icon-alt">Blog, E-commerce</div>
+                        </div>
+                        <div class="s-block" style="margin-right: 50px;">
+                            <div class="icon"><img src="icon/illustration.svg" alt=""></div>
+                            <h4 class="icon-text">UI/UX Design</h4>
+                            <div class="icon-alt">Mobile App, Website Design</div>
+                        </div>
+                        <div class="s-block">
+                            <div class="icon"><img src="icon/microphone.svg" style="color: #FFB400;"></div>
+                            <h4 class="icon-text">Sound Design</h4>
+                            <div class="icon-alt">Voice Over, Beat Making</div>
+                        </div>
+                    </div>
+                    <div class="six-blocks">
+                        <div class="s-block" style="margin-right: 50px;">
+                            <div class="icon"><img src="icon/game-development.svg" alt=""></div>
+                            <h4 class="icon-text">Game Design</h4>
+                            <div class="icon-alt">Character Design, Props & Objects</div>
+                        </div>
+                        <div class="s-block" style="margin-right: 50px;">
+                            <div class="icon"><img src="icon/photographer.svg" alt=""></div>
+                            <h4 class="icon-text">Photography</h4>
+                            <div class="icon-alt">Portrait, Product Photography</div>
+                        </div>
+                        <div class="s-block">
+                            <h4 class="icon-text">Advertising</h4>
+                            <div class="icon-alt">Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit enim, sunt veniam odit.</div>
+                            <div style="display: flex; flex-direction: row; align-items: center;">
+                                <div class="order">ORDER NOW</div>
+                                <div><img src="icon/frame.svg" alt=""></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right_frame">
+                <div class="contrast"><img src="menu_icon/Contrast.svg"></div>
+                <div class="home"><img src="menu_icon/Home.svg"></div>
+                <div class="services"><img src="menu_icon/Service.svg"></div>
+                <div class="services"><img src="menu_icon/Cv.svg"></div>
+                <div class="services"><img src="menu_icon/Portfolio.svg"></div>
+                <div class="services"><img src="menu_icon/Blog.svg"></div>
+                <div class="services"><img src="menu_icon/Contact.svg"></div>
+            </div>
         </div>
     </div>
 </body>
