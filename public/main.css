@@ -6,22 +6,23 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    background: #d5d5d7;
+    background: #e8e8ea;
 }
 .main_frame {
     position: relative;
     width: 1440px;
-    height: 1312px;
+    height: 1350px;
     display: flex;
     flex-direction: row;
     align-items: center;
     /* margin-top: 2px; */
     background: #F0F0F6;
 }
+/* Left Frame start */
 .main_frame .left_frame {
     position: relative;
     width: 305px;
-    height: 1315px;
+    height: 1350px;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
@@ -82,27 +83,22 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    width: 238px;
+    justify-content: space-around;
+    width: 228px;
     margin-top: 19px;
 
 }
-.main_frame .left_frame .profile .link_href {
-    text-decoration: none;
-    color: black;
-}
 .main_frame .left_frame .profile .icon {
     position: relative;
-    width: 24.99px;
-    height: 22.8px;
-    border-radius: 50%;
-    filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.25));
+    width: 25px;
+    height: 25px;
+    border-radius:50%;
     background: #ffb400;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,.15));
 }
 .icon-1 {
     position: relative;
-    left: 29.17%;
-    right: 27.08%;
+    left: 5.3px;
     margin-top: 5.86px;
 }
 .main_frame .left_frame .marginer {
@@ -225,13 +221,33 @@
     margin-top: 14px;
 }
 .download-cv {
+    width: 220px;
+    position: relative;
     margin-left: 40px;
     margin-bottom:25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px 15px;
+    background-color: #FFB400;
+    border-radius:5px ;
+    cursor: pointer
 }
+.down-text {
+    color: var(--Gray-2, #4F4F4F);
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    text-transform: uppercase;
+    margin-right: 19px;
+}
+/* Mid Frame Start */
 .main_frame .mid_frame {
     position: relative;
     width: 970px;
-    height: 1259px;
+    height: 1350px;
     display: flex;
     flex-direction: column;
     margin-left: 34px;
@@ -337,17 +353,11 @@
 }
 .profession .mid-btn {
     width: 154px;
-    height: 51px;
-    margin-top: 23px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+    background-color: #ffb400;
     border-radius: 5px;
-    background: var(--Yellow, #FFB400);
-}
-.profession .hire-me {
+    padding: 16px;
+    margin-top: 20px;
+    cursor: pointer;
     color: var(--Black, #2B2B2B);
     text-align: center;
     font-family: Inter;
@@ -431,10 +441,11 @@
     font-weight: 700;
     line-height: normal;
 }
+/* Right frame starts */
 .main_frame .right_frame {
     position: relative;
     width: 108px;
-    height: 1315px;
+    height: 1350px;
     background-color: #ffff;
     align-items: center;
     display: flex;
