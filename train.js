@@ -1,16 +1,33 @@
+// Shunday function tuzing, u 1ta string parametrga ega bolsin, 
+// hamda osha stringda qatnashgan raqamlarni sonini bizga return qilsin.
+//  MASALAN countDigits("ad2a54y79wet0sfgb9") 7ni return qiladi.\n\n@MITASK
 
-function letterCoun(letter, word) {
-    let acc = 0;
-    for (const char of word) {
-        if (char === letter) {
-            acc++;
+function countDigits(param) {
+    let count = 0;
+    for(const char of param) {
+        if(char >= '0' && char <= '9') { // char - bu string, shuning uchun raqamla "" ichida
+            count++;
         }
     }
-    return acc;
+
+    console.log(count);
 }
 
+countDigits("sdoufhj3874yghn34y78fgh3984ndf29786rfg8e3bngyt34");
 
-letterCoun("e", "engineer");
+
+// function letterCoun(letter, word) {
+//     let acc = 0;
+//     for (const char of word) {
+//         if (char === letter) {
+//             acc++;
+//         }
+//     }
+//     return acc;
+// }
+
+
+// letterCoun("e", "engineer");
 
 
 // console.log("Jack Ma Maslahatlari:");
@@ -23,19 +40,19 @@ letterCoun("e", "engineer");
 //     "endi dam oling foydasi yo'q endi"                  //60~
 // ];
 
-function maslahatBer(a, callback) {
-    if (typeof a !== "number") callback("Insert a number", null);
-    else if (a<=20) callback(null, list[0]);
-    else if (a>20 && a<=30) callback(null, list[1]);
-    else if (a>30 && a<=40) callback(null, list[2]);
-    else if (a>40 && a<=50) callback(null, list[3]);
-    else if (a>50 && a<=60) callback(null, list[4]);
-    else{
-        setTimeout(function () {
-            callback(null, list[5]);
-        }, 5000);
-    }
-}
+// function maslahatBer(a, callback) {
+//     if (typeof a !== "number") callback("Insert a number", null);
+//     else if (a<=20) callback(null, list[0]);
+//     else if (a>20 && a<=30) callback(null, list[1]);
+//     else if (a>30 && a<=40) callback(null, list[2]);
+//     else if (a>40 && a<=50) callback(null, list[3]);
+//     else if (a>50 && a<=60) callback(null, list[4]);
+//     else{
+//         setTimeout(function () {
+//             callback(null, list[5]);
+//         }, 5000);
+//     }
+// }
 
 
 
