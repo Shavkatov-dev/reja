@@ -22,3 +22,8 @@ mongodb.connect(connectionString,{
             });
         }
     });
+
+    // NoSql
+    // CLUSTER => DATABASE => COLLECTION => DOCUMENT
+    //SQL
+    // CLUSTER => DATABASE => TABLE => DATASET
