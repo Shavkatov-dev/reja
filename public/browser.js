@@ -21,7 +21,7 @@ document.getElementById("create-form").addEventListener('submit', function(e) {
     e.preventDefault();
 
     axios
-    .post('/create-item', {reja: createField.Value})
+    .post('/create-item', {reja: createField.value})
     .then((response) => {
         document
         .getElementById("item-list")

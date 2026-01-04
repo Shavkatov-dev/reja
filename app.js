@@ -34,7 +34,6 @@ app.post('/create-item', (req, res) => {
     console.log(req.body);
     const new_reja = req.body.reja;
     db.collection("plans").insertOne({reja: new_reja}, (err, data) => {
-        console.log(data.ops);
         res.json(data.ops[0]);
     })
 });
