@@ -1,19 +1,46 @@
+// C-TASK
+
+// Shunday function tuzing, u 2ta string parametr ega bolsin,
+// hamda agar har ikkala string bir hil harflardan iborat bolsa true
+// aks holda false qaytarsin.
+// MASALAN checkContent("mitgroup", "gmtiprou") return qiladi true.
+
+function checkContent(a, b) {
+    if(a.length !== b.length ) // harflar soni teng busagina taqqoslab kursin
+        return false; 
+    let store = {}; // a ning char lari soni uchun object 
+
+    for (let char of a) {
+        store[char] = (store[char] || 0) + 1;
+        
+    };
+    
+    for (let char of b) {
+            if (!store[char]) return false; // store dagi key 'b' ning char iga teng bulmasa, 0da hamfalse
+            store[char]--;
+    };
+
+        return true;
+    }
+    const result = checkContent("mitgroup", "groupmit");
+    console.log(result);
+// Task-B
 // Shunday function tuzing, u 1ta string parametrga ega bolsin, 
 // hamda osha stringda qatnashgan raqamlarni sonini bizga return qilsin.
 //  MASALAN countDigits("ad2a54y79wet0sfgb9") 7ni return qiladi.\n\n@MITASK
 
-function countDigits(param) {
-    let count = 0;
-    for(const char of param) {
-        if(char >= '0' && char <= '9') { // char - bu string, shuning uchun raqamla "" ichida
-            count++;
-        }
-    }
+// function countDigits(param) {
+//     let count = 0;
+//     for(const char of param) {
+//         if(char >= '0' && char <= '9') { // char - bu string, shuning uchun raqamla "" ichida
+//             count++;
+//         }
+//     }
 
-    console.log(count);
-}
+//     console.log(count);
+// }
 
-countDigits("sdoufhj3874yghn34y78fgh3984ndf29786rfg8e3bngyt34");
+// countDigits("sdoufhj3874yghn34y78fgh3984ndf29786rfg8e3bngyt34");
 
 
 // function letterCoun(letter, word) {
