@@ -13,8 +13,8 @@ fs.readFile("database/user.json", "utf8", (err, data) => {
 });
 
 // MongoDB Connect
-const db =require("./server").db();
-
+const db = require("./server").db();
+const mongodb = require("mongodb");
 // db -Qalam , database da yozib chizadi
 // -------------- 1 kirish code
 
@@ -38,6 +38,37 @@ app.post('/create-item', (req, res) => {
         res.json(data.ops[0]);
     })
 });
+
+// app.post("/delete-item", (req, res) => {
+//     const id= req.body.id;
+//     db.collection("plans").deleteOne(
+//          {_id: new mongodb.Object(id)}, function (err, data) {
+//         res.json({state: "success"});
+//     });
+// });
+app.post("/delete-item", (req, res) => {
+    const id = req.body.id;
+
+    if (!mongodb.ObjectId.isValid(id)) {
+        return res.status(400).json({ state: "invalid_id" });
+    }
+
+    db.collection("plans").deleteOne(
+        { _id: new mongodb.ObjectId(id) },
+        function (err, result) {
+            if (err) {
+                return res.status(500).json({ state: "error" });
+            }
+
+            if (result.deletedCount === 0) {
+                return res.status(404).json({ state: "not_found" });
+            }
+
+            res.json({ state: "success" });
+        }
+    );
+});
+
 
 app.get('/author', (req, res) => {
     res.render("author", {user: user } );
