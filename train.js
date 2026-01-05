@@ -1,3 +1,53 @@
+// D-TASK
+
+// Shunday class tuzing tuzing nomi Shop, va uni constructoriga 3 hil mahsulot pass bolsin,
+// hamda classning 3ta methodi bolsin, biri qoldiq, biri sotish va biri qabul.
+// Har bir method ishga tushgan vaqt ham log qilinsin.
+// MASALAN: const shop = new Shop(4, 5, 2); 
+// shop.qoldiq() => return hozir 20:40da 4ta non, 5ta lagmon va 2ta cola mavjud!
+// shop.sotish('non', 3) & 
+// shop.qabul('cola', 4) &
+// shop.qoldiq() => return hozir 20:50da 1ta non, 5ta lagmon va 6ta cola mavjud!
+
+class Shop {
+    constructor(non, lagmon, cola) {
+        this.non = non;
+        this.lagmon = lagmon;
+        this.cola = cola;
+    }
+    time() {
+        const now = new Date();
+        return `${now.getHours()}:${now.getMinutes()}`;
+    }
+
+    qoldiq(product, quantity){
+        return `Hozir ${this.time()}da ${this.non}ta non, ${this.lagmon}ta lagmon va ${this.cola}ta cola mavjud!`;
+    };
+    sotish(product, quantity){
+        if(this[product] >= quantity) {
+            this[product] -= quantity;
+            console.log(`${this.time()}da ${quantity}ta ${product} sotildi`);
+        } else {
+            console.log(`${this.time()}da yetarli ${product} yuq`);
+        }
+    };
+    qabul(product, quantity) {
+        this[product] += quantity;
+        console.log(`${this.time()}da ${quantity}ta ${product} qabul qilindi`);
+    };
+};
+
+const shop = new Shop(4, 5, 2);
+
+console.log(shop.qoldiq());
+
+shop.sotish('non', 3);
+shop.qabul('cola', 4);
+
+console.log(shop.qoldiq());
+
+
+
 // C-TASK
 
 // Shunday function tuzing, u 2ta string parametr ega bolsin,
@@ -5,25 +55,25 @@
 // aks holda false qaytarsin.
 // MASALAN checkContent("mitgroup", "gmtiprou") return qiladi true.
 
-function checkContent(a, b) {
-    if(a.length !== b.length ) // harflar soni teng busagina taqqoslab kursin
-        return false; 
-    let store = {}; // a ning char lari soni uchun object 
+// function checkContent(a, b) {
+//     if(a.length !== b.length ) // harflar soni teng busagina taqqoslab kursin
+//         return false; 
+//     let store = {}; // a ning char lari soni uchun object 
 
-    for (let char of a) {
-        store[char] = (store[char] || 0) + 1;
+//     for (let char of a) {
+//         store[char] = (store[char] || 0) + 1;
         
-    };
+//     };
     
-    for (let char of b) {
-            if (!store[char]) return false; // store dagi key 'b' ning char iga teng bulmasa, 0da hamfalse
-            store[char]--;
-    };
+//     for (let char of b) {
+//             if (!store[char]) return false; // store dagi key 'b' ning char iga teng bulmasa, 0da hamfalse
+//             store[char]--;
+//     };
 
-        return true;
-    }
-    const result = checkContent("mitgroup", "groupmit");
-    console.log(result);
+//         return true;
+//     }
+//     const result = checkContent("mitgroup", "groupmit");
+//     console.log(result);
 // Task-B
 // Shunday function tuzing, u 1ta string parametrga ega bolsin, 
 // hamda osha stringda qatnashgan raqamlarni sonini bizga return qilsin.

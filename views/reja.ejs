@@ -14,7 +14,7 @@
   <body style="background-color: #b8bbd1">
     <!-- SHU YERDAN YOZASIZ -->
     <div class="container">
-      <h1 class="display-4 text-center py-1">REJA VA MAQSADLAR</h1>
+      <h1 class="display-4 text-center py-1">Plans and To-do list</h1>
       <div class="jumbotron p-3 shadow-sm">
         <form id="create-form" action="/create-item" method="POST">
           <div class="d-flex align-items-center">
@@ -25,10 +25,11 @@
               autocomplete="off"
               class="form-control mr-3"
               type="text"
+              placeholder="What's your plan?"
               style="flex: 1"
             />
             <button type="submit" class="btn btn-primary" style="border-radius: 20px">
-              Yangi Reja qo'shish
+              Add new plan
             </button>
           </div>
         </form>
@@ -40,10 +41,10 @@
       <span class="item-text"><%= item.reja %></span>
       <div>
         <button data-id="<%= item._id %>" class="edit-me btn btn-secondary btn-sm mr-1">
-          O'zgartirish
+          Edit
         </button>
         <button data-id="<%= item._id %>" class="delete-me btn btn-danger btn-sm">
-          O'chirish
+          Delete
         </button>
       </div>
     </li>
@@ -52,7 +53,7 @@
 
 
         <button id="clean-all" class="btn btn-danger" style = "border-radius: 20px">
-          Hammasini ochirish
+          Delete All
         </button>
     </div>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
