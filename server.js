@@ -27,3 +27,6 @@ mongodb.connect(connectionString,{
     // CLUSTER => DATABASE => COLLECTION => DOCUMENT
     //SQL
     // CLUSTER => DATABASE => TABLE => DATASET
+
+    // mongo TCP boglanish hisoblanadi yani doimiy boglanish
+    // http esa 1 martalik boglanish

@@ -1,0 +1,666 @@
+REJA Project – Code & Explanations
+=================================
+
+This document copies the main code files of the REJA app and explains what each part does, their general pattern, and how they work together.
+
+------------------------------------------------------------
+1) app.js – Backend (Express + MongoDB)
+------------------------------------------------------------
+
+ROLE (GENERAL FORM)
+- Typical Express.js application file:
+  - Imports dependencies (`express`, `fs`, MongoDB helper).
+  - Connects to the database.
+  - Configures middleware.
+  - Defines API routes (CRUD operations).
+  - Defines view routes for pages.
+  - Exports the configured `app` instance.
+
+FULL CODE (from app.js)
+-----------------------
+
+console.log('Web serverni boshlash');
+
+// ============================================================================
+// DEPENDENCIES & MODULES
+// ============================================================================
+
+const express = require('express');
+const app = express();
+const fs = require("fs");
+
+// ============================================================================
+// USER DATA LOADING
+// ============================================================================
+
+let user;
+
+fs.readFile("database/user.json", "utf8", (err, data) => {
+    if (err) {
+        console.log('ERROR:', err);
+    } else {
+        user = JSON.parse(data);
+    }
+});
+
+// ============================================================================
+// DATABASE CONNECTION
+// ============================================================================
+
+const db = require("./server").db();
+const mongodb = require("mongodb");
+
+// ============================================================================
+// MIDDLEWARE CONFIGURATION
+// ============================================================================
+
+app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ============================================================================
+// VIEW ENGINE CONFIGURATION
+// ============================================================================
+
+app.set('views', 'views');
+app.set('view engine', 'ejs');
+
+// ============================================================================
+// API ROUTES - CRUD OPERATIONS
+// ============================================================================
+
+app.post('/create-item', (req, res) => {
+    console.log('user entered /create-item');
+    console.log(req.body);
+    
+    const new_reja = req.body.reja;
+    
+    db.collection("plans").insertOne({ reja: new_reja }, (err, data) => {
+        res.json(data.ops[0]);
+    });
+});
+
+app.post("/delete-item", (req, res) => {
+    const id = req.body.id;
+
+    if (!mongodb.ObjectId.isValid(id)) {
+        return res.status(400).json({ state: "invalid_id" });
+    }
+
+    db.collection("plans").deleteOne(
+        { _id: new mongodb.ObjectId(id) },
+        function (err, result) {
+            if (err) {
+                return res.status(500).json({ state: "error" });
+            }
+
+            if (result.deletedCount === 0) {
+                return res.status(404).json({ state: "not_found" });
+            }
+
+            res.json({ state: "success" });
+        }
+    );
+});
+
+app.post("/edit-item", (req, res) => {
+    const data = req.body;
+    const id = req.body.id;
+    console.log(data);
+    
+    db.collection("plans").findOneAndUpdate(
+        { _id: new mongodb.ObjectId(id) },
+        { $set: { reja: data.new_input } },
+        function (err, data) {
+            res.json({ state: "success" });
+        }
+    );
+});
+
+app.post("/clean-all", (req, res) => {
+    db.collection("plans").deleteMany({}, function (err, result) {
+        res.json({ state: "all plans deleted" });
+    });
+});
+
+// ============================================================================
+// VIEW ROUTES
+// ============================================================================
+
+app.get('/author', (req, res) => {
+    res.render("author", { user: user });
+});
+
+app.get("/", function (req, res) {
+    console.log('user entered /');
+    
+    db.collection("plans").find().toArray((err, data) => {
+        if (err) {
+            console.log(err);
+            res.end("something went wrong");
+        } else {
+            console.log(data);
+            res.render("reja", { items: data });
+        }
+    });
+});
+
+// ============================================================================
+// EXPORT
+// ============================================================================
+
+module.exports = app;
+
+
+EXPLANATION BY SECTIONS
+-----------------------
+
+1. Dependencies & app setup
+   - `const express = require('express'); const app = express();`
+     - Imports Express and creates the main app object.
+     - General form in Express projects:  
+       `const express = require('express'); const app = express();`
+   - `const fs = require("fs");`
+     - Node’s built‑in file system module, used here to load `user.json`.
+
+2. User data loading (from JSON file)
+   - `let user;`
+     - Declares a variable to hold user data (used later in the `/author` route).
+   - `fs.readFile("database/user.json", "utf8", (err, data) => { ... });`
+     - Asynchronously reads JSON from disk.
+     - On success: `user = JSON.parse(data);` converts JSON string → JS object.
+     - Pattern: “load configuration/static data once when server starts”.
+
+3. Database connection
+   - `const db = require("./server").db();`
+     - Imports a helper from `server.js` that returns a connected MongoDB client/db.
+     - `db` is used everywhere to call `db.collection("plans")...`.
+   - `const mongodb = require("mongodb");`
+     - Provides `ObjectId` type and other MongoDB utilities.
+
+4. Middleware configuration
+   - `app.use(express.static("public"));`
+     - Serves static files from `public/` (CSS, client JS like `browser.js`, images).
+   - `app.use(express.json());`
+     - Parses JSON request bodies into `req.body`.
+   - `app.use(express.urlencoded({ extended: true }));`
+     - Parses HTML form submissions (`application/x-www-form-urlencoded`).
+   - These follow the common Express middleware pattern:  
+     `app.use(<middlewareFunction>);`
+
+5. View engine (EJS)
+   - `app.set('views', 'views');`
+     - Tells Express that EJS templates live in the `views/` folder.
+   - `app.set('view engine', 'ejs');`
+     - Enables usage of `res.render("templateName", data)` to render `.ejs` files.
+
+6. API route: POST /create-item
+   - Pattern:  
+     `app.post('/path', (req, res) => { ... });`
+   - Reads `req.body.reja` (sent from frontend), inserts `{ reja: new_reja }` into MongoDB:
+     - `db.collection("plans").insertOne({ reja: new_reja }, (err, data) => { ... });`
+   - Sends back `data.ops[0]`, which is the created MongoDB document (with `_id`).
+   - This allows the frontend to immediately render the new item without reloading.
+
+7. API route: POST /delete-item
+   - Receives an `id` from `req.body.id`.
+   - Validates the ID format: `mongodb.ObjectId.isValid(id)`.
+     - If invalid → HTTP 400 with `{ state: "invalid_id" }`.
+   - If valid, calls:
+     - `db.collection("plans").deleteOne({ _id: new mongodb.ObjectId(id) }, callback)`
+   - Handles cases:
+     - Database error → `{ state: "error" }` with status 500.
+     - No document deleted → `{ state: "not_found" }` with status 404.
+     - Success → `{ state: "success" }`.
+
+8. API route: POST /edit-item
+   - Reads `id` and `new_input` from `req.body`.
+   - Uses `findOneAndUpdate`:
+     - Filter: `{ _id: new mongodb.ObjectId(id) }`
+     - Update: `{ $set: { reja: data.new_input } }`
+   - On completion, responds with `{ state: "success" }`.
+   - This updates the text of an existing plan.
+
+9. API route: POST /clean-all
+   - `db.collection("plans").deleteMany({}, ...)`
+     - Empty filter `{}` means “delete all documents”.
+   - Responds with `{ state: "all plans deleted" }`.
+   - Destructive, used by the “Clean All” button in the frontend.
+
+10. View route: GET /author
+    - `app.get('/author', (req, res) => { res.render("author", { user: user }); });`
+    - Renders the `author.ejs` template, passing the `user` object from `user.json`.
+    - General pattern:  
+      `app.get('/path', (req, res) => { res.render('viewName', data); });`
+
+11. View route: GET /
+    - `db.collection("plans").find().toArray((err, data) => { ... });`
+      - Queries all plans from the DB.
+    - On success: `res.render("reja", { items: data });`
+      - Renders the main page template with all items.
+
+12. Export
+    - `module.exports = app;`
+    - Lets another file (usually `server.js`) import and call `app.listen(...)`.
+
+How app.js works in the whole system
+-----------------------------------
+- When the Node process starts, `app.js`:
+  - Loads user info from `user.json`.
+  - Connects to MongoDB through `./server`.
+  - Configures middleware and routes.
+  - Gets exported and used by a listener file to start the HTTP server.
+- HTTP requests from the browser hit these routes, which then:
+  - Talk to MongoDB.
+  - Render views (for GET) or send JSON (for AJAX calls from the frontend).
+
+
+------------------------------------------------------------
+2) public/browser.js – Frontend (Client-side JS)
+------------------------------------------------------------
+
+ROLE (GENERAL FORM)
+- Typical frontend script for a small CRUD app:
+  - Keeps references to DOM elements.
+  - Sends AJAX (Axios) requests to backend routes.
+  - Updates the page DOM dynamically without full reloads.
+
+FULL CODE (from public/browser.js)
+----------------------------------
+
+console.log('Frontend JS started');
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+function itemTemplate(item) {
+    return `
+    <li class="list-group-item list-group-item-info d-flex align-items-center justify-content-between">
+      <span class="item-text">${item.reja}</span>
+      <div>
+        <button data-id="${item._id}" class="edit-me btn btn-secondary btn-sm mr-1">
+          Edit
+        </button>
+        <button data-id="${item._id}" class="delete-me btn btn-danger btn-sm">
+          Delete
+        </button>
+      </div>
+    </li>`;
+}
+
+// ============================================================================
+// DOM ELEMENT REFERENCES
+// ============================================================================
+
+let createField = document.getElementById("create-field");
+
+// ============================================================================
+// CREATE ITEM FUNCTIONALITY
+// ============================================================================
+
+document.getElementById("create-form").addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    axios
+        .post('/create-item', { reja: createField.value })
+        .then((response) => {
+            document
+                .getElementById("item-list")
+                .insertAdjacentHTML("beforeend", itemTemplate(response.data));
+            
+            createField.value = "";
+            createField.focus();
+        })
+        .catch((err) => {
+            console.log("Please try again!");
+        });
+});
+
+// ============================================================================
+// DELETE & EDIT FUNCTIONALITY (Event Delegation)
+// ============================================================================
+
+document.addEventListener('click', function (e) {
+
+    // ========================================================================
+    // DELETE OPERATION
+    // ========================================================================
+    
+    if (e.target.classList.contains("delete-me")) {
+        if (confirm("Are you sure you want to delete this item?")) {
+            const itemId = e.target.getAttribute("data-id");
+            
+            axios
+                .post("/delete-item", { id: itemId })
+                .then(response => {
+                    console.log(response.data);
+                    e.target.parentElement.parentElement.remove();
+                })
+                .catch(err => {
+                    console.log("Please try again!");
+                });
+        }
+    }
+
+    // ========================================================================
+    // EDIT OPERATION
+    // ========================================================================
+    
+    if (e.target.classList.contains("edit-me")) {
+        const currentText = e.target.parentElement.parentElement.querySelector(".item-text").innerHTML;
+        
+        let userInput = prompt("Enter the new text", currentText);
+        
+        if (userInput) {
+            const itemId = e.target.getAttribute("data-id");
+            
+            axios
+                .post("/edit-item", {
+                    id: itemId,
+                    new_input: userInput,
+                })
+                .then(response => {
+                    console.log(response);
+                    e.target.parentElement.parentElement.querySelector(".item-text").innerHTML = userInput;
+                })
+                .catch(err => {
+                    console.log("Please try again!");
+                });
+        }
+    }
+});
+
+// ============================================================================
+// CLEAN ALL FUNCTIONALITY
+// ============================================================================
+
+document.getElementById("clean-all").addEventListener('click', function(e) {
+    if (confirm("Are you sure you want to delete all items?")) {
+        axios.post("/clean-all")
+            .then(response => {
+                console.log(response.data);
+                document.getElementById("item-list").innerHTML = "";
+            })
+            .catch(err => {
+                console.log("Please try again!");
+            });
+    }
+});
+
+
+EXPLANATION BY SECTIONS
+-----------------------
+
+1. Utility: itemTemplate
+   - `function itemTemplate(item) { return \`<li> ... \`; }`
+   - Takes a MongoDB document (with `_id` and `reja`) and returns a chunk of HTML:
+     - Shows the text.
+     - Includes “Edit” and “Delete” buttons.
+     - Stores the item’s `_id` in `data-id` attributes on the buttons.
+   - General pattern: **template function** that converts data → HTML string.
+
+2. DOM references
+   - `let createField = document.getElementById("create-field");`
+   - Holds a reference to the `<input>` where you type new plans.
+   - Used in the create handler to read and clear the value.
+
+3. Create item flow
+   - `document.getElementById("create-form").addEventListener('submit', function(e) { ... });`
+   - Steps:
+     1. `e.preventDefault();` stops the page from reloading.
+     2. `axios.post('/create-item', { reja: createField.value })` sends the text to the backend.
+     3. On success:
+        - `response.data` is the created item (coming from `/create-item`).
+        - `insertAdjacentHTML("beforeend", itemTemplate(response.data));` adds it to the list.
+        - Clears and focuses the input field.
+
+4. Event delegation for Delete & Edit
+   - `document.addEventListener('click', function (e) { ... });`
+   - Uses **event delegation**:
+     - Instead of attaching listeners to each button, listens on `document` and checks:
+       - `e.target.classList.contains("delete-me")`
+       - `e.target.classList.contains("edit-me")`
+   - This works even for items added dynamically later.
+
+   4.1 Delete operation
+   - On delete button:
+     - Asks `confirm("Are you sure you want to delete this item?")`.
+     - Reads `data-id` → `itemId`.
+     - Calls `axios.post("/delete-item", { id: itemId })`.
+     - On success:  
+       `e.target.parentElement.parentElement.remove();`  
+       which removes the `<li>` from the DOM.
+
+   4.2 Edit operation
+   - On edit button:
+     - Reads current text:  
+       `const currentText = ...querySelector(".item-text").innerHTML;`
+     - `prompt("Enter the new text", currentText)` asks user for a new value.
+     - If user entered something:
+       - Reads `itemId` from `data-id`.
+       - Sends `axios.post("/edit-item", { id: itemId, new_input: userInput })`.
+       - On success: updates the `.item-text` element in the DOM.
+
+5. Clean All operation
+   - Listener on the element with id `"clean-all"`:
+     - Confirmation dialog to avoid accidental mass delete.
+     - `axios.post("/clean-all")` calls the backend.
+     - On success: `document.getElementById("item-list").innerHTML = "";`
+       - Clears all items in the UI.
+
+How browser.js works together with app.js
+----------------------------------------
+- `browser.js` runs in the browser and responds to user actions:
+  - Submit form → POST `/create-item`
+  - Click delete → POST `/delete-item`
+  - Click edit → POST `/edit-item`
+  - Click clean-all → POST `/clean-all`
+- `app.js` receives these requests, talks to MongoDB, and sends responses.
+- The frontend then updates the page DOM based on responses, so everything feels dynamic and interactive without full page reloads.
+
+
+------------------------------------------------------------
+3) views/reja.ejs – Frontend Template (EJS)
+------------------------------------------------------------
+
+ROLE (GENERAL FORM)
+- EJS (Embedded JavaScript) template file:
+  - Mixes HTML markup with JavaScript code blocks.
+  - Gets rendered server-side by Express when `res.render("reja", { items: data })` is called.
+  - Receives data from the backend (like `items` array) and generates HTML.
+  - General pattern: HTML structure + EJS tags (`<% ... %>`, `<%= ... %>`) for dynamic content.
+
+FULL CODE (from views/reja.ejs)
+--------------------------------
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REJA</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body style="background-color: #b8bbd1">
+    <!-- SHU YERDAN YOZASIZ -->
+    <div class="container">
+      <h1 class="display-4 text-center py-1">Plans and To-do list</h1>
+      <div class="jumbotron p-3 shadow-sm">
+        <form id="create-form" action="/create-item" method="POST">
+          <div class="d-flex align-items-center">
+            <input
+              id="create-field"
+              name="reja"
+              autofocus
+              autocomplete="off"
+              class="form-control mr-3"
+              type="text"
+              placeholder="What's your plan?"
+              style="flex: 1"
+            />
+            <button type="submit" class="btn btn-primary" style="border-radius: 20px">
+              Add new plan
+            </button>
+          </div>
+        </form>
+      </div>
+
+     <ul id="item-list" class="list-group pb-5">
+  <% items.forEach(function(item) { %>
+    <li class="list-group-item list-group-item-info d-flex align-items-center justify-content-between">
+      <span class="item-text"><%= item.reja %></span>
+      <div>
+        <button data-id="<%= item._id %>" class="edit-me btn btn-secondary btn-sm mr-1">
+          Edit
+        </button>
+        <button data-id="<%= item._id %>" class="delete-me btn btn-danger btn-sm">
+          Delete
+        </button>
+      </div>
+    </li>
+  <% }) %>
+</ul>
+
+
+        <button id="clean-all" class="btn btn-danger" style = "border-radius: 20px">
+          Delete All
+        </button>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/browser.js"></script>
+  </body>
+</html>
+
+
+EXPLANATION BY SECTIONS
+-----------------------
+
+1. HTML Document Structure
+   - Standard HTML5 document with `<head>` and `<body>` tags.
+   - `<meta charset="UTF-8" />` ensures proper text encoding.
+   - `<meta name="viewport" ...>` makes the page responsive on mobile devices.
+   - `<title>REJA</title>` sets the browser tab title.
+
+2. Bootstrap CSS Framework
+   - `<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" ...>`
+   - Loads Bootstrap 4.2.1 from a CDN (Content Delivery Network).
+   - Provides pre-built CSS classes like `container`, `btn`, `list-group`, etc.
+   - General pattern: External CSS framework for styling without writing custom CSS.
+
+3. Body Styling
+   - `<body style="background-color: #b8bbd1">`
+   - Sets a light blue-gray background color for the entire page.
+   - Inline style attribute (could also be moved to a CSS file).
+
+4. Container & Header
+   - `<div class="container">`
+     - Bootstrap class that centers content and adds padding.
+   - `<h1 class="display-4 text-center py-1">Plans and To-do list</h1>`
+     - Large heading (`display-4`), centered (`text-center`), with vertical padding (`py-1`).
+
+5. Create Form Section
+   - `<form id="create-form" action="/create-item" method="POST">`
+     - Form element with:
+       - `id="create-form"` → Used by `browser.js` to attach event listener.
+       - `action="/create-item"` → Would submit to this URL if not prevented by JS.
+       - `method="POST"` → HTTP POST method.
+     - Note: The form submission is intercepted by JavaScript (`e.preventDefault()` in `browser.js`), so the `action` attribute isn't actually used.
+   
+   - `<input id="create-field" name="reja" ...>`
+     - Text input field:
+       - `id="create-field"` → Referenced in `browser.js` as `createField`.
+       - `name="reja"` → Field name (matches what backend expects: `req.body.reja`).
+       - `autofocus` → Automatically focuses the input when page loads.
+       - `autocomplete="off"` → Disables browser autocomplete suggestions.
+       - `placeholder="What's your plan?"` → Hint text shown when input is empty.
+       - `style="flex: 1"` → Makes input take up remaining space in flex container.
+   
+   - `<button type="submit" class="btn btn-primary" ...>`
+     - Submit button styled with Bootstrap classes (`btn btn-primary`).
+     - `type="submit"` → Triggers form submission when clicked.
+
+6. Dynamic List Rendering (EJS Template Logic)
+   - `<ul id="item-list" class="list-group pb-5">`
+     - Unordered list container:
+       - `id="item-list"` → Target for JavaScript DOM manipulation.
+       - `class="list-group"` → Bootstrap styling for list items.
+       - `pb-5` → Bottom padding.
+   
+   - EJS Loop: `<% items.forEach(function(item) { %> ... <% }) %>`
+     - **EJS syntax explanation:**
+       - `<% ... %>` → Executes JavaScript code (doesn't output anything).
+       - `<%= ... %>` → Outputs the value of a JavaScript expression (escapes HTML).
+       - `items` → Array passed from backend: `res.render("reja", { items: data })`.
+     - **How it works:**
+       - Server-side: Express processes the EJS template.
+       - Loops through each `item` in the `items` array.
+       - For each item, generates an `<li>` element with the item's data.
+       - The final HTML is sent to the browser.
+   
+   - Inside the loop:
+     - `<span class="item-text"><%= item.reja %></span>`
+       - Displays the plan text (`item.reja`).
+       - `<%= %>` outputs the value and escapes special characters for security.
+     
+     - `<button data-id="<%= item._id %>" class="edit-me ...">`
+       - Edit button:
+         - `data-id="<%= item._id %>"` → Stores MongoDB ObjectId as HTML data attribute.
+         - `class="edit-me"` → Used by `browser.js` event delegation to detect clicks.
+         - The `_id` is used when sending edit/delete requests to the backend.
+     
+     - `<button data-id="<%= item._id %>" class="delete-me ...">`
+       - Delete button with same pattern as edit button.
+       - `class="delete-me"` → Detected by `browser.js` click handler.
+
+7. Clean All Button
+   - `<button id="clean-all" class="btn btn-danger" ...>`
+     - Button to delete all items:
+       - `id="clean-all"` → Referenced in `browser.js` event listener.
+       - `class="btn btn-danger"` → Red styling (Bootstrap danger color).
+       - Click handler attached in `browser.js`.
+
+8. JavaScript Libraries
+   - `<script src="https://unpkg.com/axios/dist/axios.min.js"></script>`
+     - Loads Axios library from CDN.
+     - Used in `browser.js` for making HTTP requests (`axios.post(...)`).
+   
+   - `<script src="/browser.js"></script>`
+     - Loads the client-side JavaScript file.
+     - Path `/browser.js` is served by Express static middleware from `public/browser.js`.
+     - This script handles all interactive functionality (create, edit, delete).
+
+How reja.ejs works in the whole system
+--------------------------------------
+- **Server-side rendering flow:**
+  1. User visits `GET /` route.
+  2. `app.js` queries MongoDB: `db.collection("plans").find().toArray(...)`.
+  3. Express calls `res.render("reja", { items: data })`.
+  4. EJS engine processes `reja.ejs`:
+     - Replaces `<% items.forEach(...) %>` with actual loop execution.
+     - Replaces `<%= item.reja %>` with actual text values.
+     - Replaces `<%= item._id %>` with actual MongoDB IDs.
+  5. Final HTML (with all items rendered) is sent to the browser.
+  
+- **Client-side interaction:**
+  - Browser receives the HTML and loads `browser.js`.
+  - User interactions (form submit, button clicks) are handled by `browser.js`.
+  - New items added via AJAX are inserted into `#item-list` dynamically.
+  - The EJS template only renders the initial page load; subsequent updates are handled by JavaScript DOM manipulation.
+
+
+------------------------------------------------------------
+How to use this file
+------------------------------------------------------------
+
+- This `code_explanation.txt` lives in your project root.
+- You can:
+  - Download it directly from your IDE/file explorer.
+  - Open it in any text editor to review how the code works.
+
+

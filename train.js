@@ -1,3 +1,16 @@
+// E-TASK
+// Shunday function tuzing, u bitta string argumentni qabul qilib osha stringni
+// teskari qilib return qilsin.
+// MASALAN: getReverse("hello") return qilsin "olleh".
+
+function getReverse(str) {
+  return str.split("").reverse().join("");
+}
+
+console.log(getReverse("hello")); 
+console.log(getReverse("aziza"));
+
+
 // D-TASK
 
 // Shunday class tuzing tuzing nomi Shop, va uni constructoriga 3 hil mahsulot pass bolsin,
@@ -9,42 +22,42 @@
 // shop.qabul('cola', 4) &
 // shop.qoldiq() => return hozir 20:50da 1ta non, 5ta lagmon va 6ta cola mavjud!
 
-class Shop {
-    constructor(non, lagmon, cola) {
-        this.non = non;
-        this.lagmon = lagmon;
-        this.cola = cola;
-    }
-    time() {
-        const now = new Date();
-        return `${now.getHours()}:${now.getMinutes()}`;
-    }
+// class Shop {
+//     constructor(non, lagmon, cola) {
+//         this.non = non;
+//         this.lagmon = lagmon;
+//         this.cola = cola;
+//     }
+//     time() {
+//         const now = new Date();
+//         return `${now.getHours()}:${now.getMinutes()}`;
+//     }
 
-    qoldiq(product, quantity){
-        return `Hozir ${this.time()}da ${this.non}ta non, ${this.lagmon}ta lagmon va ${this.cola}ta cola mavjud!`;
-    };
-    sotish(product, quantity){
-        if(this[product] >= quantity) {
-            this[product] -= quantity;
-            console.log(`${this.time()}da ${quantity}ta ${product} sotildi`);
-        } else {
-            console.log(`${this.time()}da yetarli ${product} yuq`);
-        }
-    };
-    qabul(product, quantity) {
-        this[product] += quantity;
-        console.log(`${this.time()}da ${quantity}ta ${product} qabul qilindi`);
-    };
-};
+//     qoldiq(product, quantity){
+//         return `Hozir ${this.time()}da ${this.non}ta non, ${this.lagmon}ta lagmon va ${this.cola}ta cola mavjud!`;
+//     };
+//     sotish(product, quantity){
+//         if(this[product] >= quantity) {
+//             this[product] -= quantity;
+//             console.log(`${this.time()}da ${quantity}ta ${product} sotildi`);
+//         } else {
+//             console.log(`${this.time()}da yetarli ${product} yuq`);
+//         }
+//     };
+//     qabul(product, quantity) {
+//         this[product] += quantity;
+//         console.log(`${this.time()}da ${quantity}ta ${product} qabul qilindi`);
+//     };
+// };
 
-const shop = new Shop(4, 5, 2);
+// const shop = new Shop(4, 5, 2);
 
-console.log(shop.qoldiq());
+// console.log(shop.qoldiq());
 
-shop.sotish('non', 3);
-shop.qabul('cola', 4);
+// shop.sotish('non', 3);
+// shop.qabul('cola', 4);
 
-console.log(shop.qoldiq());
+// console.log(shop.qoldiq());
 
 
 
@@ -92,7 +105,7 @@ console.log(shop.qoldiq());
 
 // countDigits("sdoufhj3874yghn34y78fgh3984ndf29786rfg8e3bngyt34");
 
-
+// TASK-A
 // function letterCoun(letter, word) {
 //     let acc = 0;
 //     for (const char of word) {
