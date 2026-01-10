@@ -1,14 +1,34 @@
+// F-TASK
+
+// Shunday findDoublers function tuzing, unga faqat bitta string argument pass bolib,
+// agar stringda bir hil harf qatnashgan bolsa true, qatnashmasa false qaytarishi kerak.
+// MASALAN: getReverse("hello") return true return qiladi.
+
+function findDoublers(str) {
+  const count = {};
+
+  for (const char of str) {
+    if (count[char]) 
+      return true;
+    count[char] = 1;
+  }
+  return false;
+}
+const result = findDoublers("mittgroup");
+console.log(result);
+
+
 // E-TASK
 // Shunday function tuzing, u bitta string argumentni qabul qilib osha stringni
 // teskari qilib return qilsin.
 // MASALAN: getReverse("hello") return qilsin "olleh".
 
-function getReverse(str) {
-  return str.split("").reverse().join("");
-}
+// function getReverse(str) {
+//   return str.split("").reverse().join("");
+// }
 
-console.log(getReverse("hello")); 
-console.log(getReverse("aziza"));
+// console.log(getReverse("hello")); 
+// console.log(getReverse("aziza"));
 
 
 // D-TASK
@@ -106,7 +126,7 @@ console.log(getReverse("aziza"));
 // countDigits("sdoufhj3874yghn34y78fgh3984ndf29786rfg8e3bngyt34");
 
 // TASK-A
-// function letterCoun(letter, word) {
+// function letterCount(letter, word) {
 //     let acc = 0;
 //     for (const char of word) {
 //         if (char === letter) {
@@ -117,7 +137,7 @@ console.log(getReverse("aziza"));
 // }
 
 
-// letterCoun("e", "engineer");
+// letterCount("e", "engineer");
 
 
 // console.log("Jack Ma Maslahatlari:");
